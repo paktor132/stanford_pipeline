@@ -4,9 +4,10 @@ import re
 import logging
 import datetime
 from stanford_corenlp_pywrapper import sockwrap
+import time
 
 
-def stanford_parse(coll, stories, stanford):
+def stanford_parse(coll, stories, stanford, stanford_parser = None):
     """
     Runs stories pulled from the MongoDB instance through CoreNLP. Updates
     the database entry with the parsed sentences. Currently set to run the
@@ -23,12 +24,19 @@ def stanford_parse(coll, stories, stanford):
 
     stanford: String.
                 Directory path for Stanford CoreNLP.
+                
+    Returns
+    ----------
+    
+    stanford_parser: sockwrap.SockWrap
+            Socket for the parser so we don't need to constantly shut down and restart the parser
     """
     logger = logging.getLogger('stanford')
 
     logger.info('Setting up CoreNLP.')
     print "\nSetting up StanfordNLP. The program isn't dead. Promise."
-    stanford_parser = sockwrap.SockWrap(mode='justparse',
+    if stanford_parser is None:
+        stanford_parser = sockwrap.SockWrap(mode='justparse',
                                         configfile='stanford_config.ini',
                                         corenlp_libdir=stanford)
 
@@ -65,6 +73,8 @@ def stanford_parse(coll, stories, stanford):
 
     print 'Done with StanfordNLP parse...\n\n'
     logger.info('Done with CoreNLP parse.')
+    time.sleep(5) #give other stuff on the box time to run
+    return stanford_parser
 
 
 def _sentence_segmenter(paragr):
