@@ -135,10 +135,12 @@ def main():
     logger.addHandler(fh)
     logger.info('Running.')
 
-    now = datetime.datetime.utcnow()
-    coll = make_conn(db_auth, db_user, db_pass)
-    stories = query_today(coll, now)
-    parser.stanford_parse(coll, stories, stanford_dir)
+    stanford_parser = None
+    while 1:
+        now = datetime.datetime.utcnow()
+        coll = make_conn(db_auth, db_user, db_pass)
+        stories = query_today(coll, now)
+        stanford_parser = parser.stanford_parse(coll, stories, stanford_dir, stanford_parser)
 
 
 if __name__ == '__main__':
