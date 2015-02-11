@@ -66,8 +66,8 @@ def query_today(collection, date):
 
     logger = logging.getLogger('stanford')
     gt_date = date - datetime.timedelta(days=1)
-    posts = collection.find({"$and": [{"date_added": {"$lte": date}},
-                                      {"date_added": {"$gt": gt_date}},
+    posts = collection.find({"$and": [#{"date_added": {"$lte": date}},
+                                      #{"date_added": {"$gt": gt_date}},
                                       {"stanford": 0}]})
     logger.info('Returning {} total stories.'.format(posts.count()))
     return posts
